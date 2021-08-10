@@ -95,15 +95,20 @@ def get_vaccdata(file_name):
         tf = True
 
         # 잔여 백신 발생 병원 리스트에 추가
+        #병원의 데이터가 이미 저장된 경우
         if temp.host_name in hosp_name:
+            #병원 이름 리스트에서 병원의 인덱스들을 모두 반환
             idx = list(filter(lambda e: hosp_name[e] == temp.host_name, range(len(hosp_name))))
+            #저장된 병원 데이터에 하나씩 접근
             for k in idx:
+                #각 백신들 개수 비교 > 모두 같으면 중복된 데이터이므로 저장하지 않고 다음 반복 진행
                 if temp.pfizer == hospitals[k].pfizer and temp.moderna == hospitals[k].moderna and temp.AZ == hospitals[k].AZ:
                     tf = False
                     break
             if not tf:
                 continue
 
+        #중복된 데이터가 아닌 경우 저장
         hospitals.append(temp)
         hosp_name.append(temp.host_name)
         times.append(get_time(file_name))
@@ -172,9 +177,7 @@ def get_files(file_path):
     save(file_path)
 
 
+start_time = timeit.default_timer()
 get_files(file_path)
-
-
-# start_time = timeit.default_timer()
-# terminate_time = timeit.default_timer()
-# print("%f초"%(terminate_time-start_time))
+terminate_time = timeit.default_timer()
+print("%f초"%(terminate_time-start_time))
