@@ -9,7 +9,6 @@ import re
 import timeit
 
 file_path = 'd:/데이터교육/vac0810/'
-file_name = '10_02_26.txt'
 
 #병원 한개의 정보를 담는 클래스
 class host:
@@ -20,7 +19,6 @@ class host:
     host_name = ''
     host_dist = ''
     host_addr = ''
-    time = ''
     date = ''
 
 #잔여 백신이 발생한 병원 클래스를 저장할 리스트
@@ -34,7 +32,8 @@ AZ = []
 times = []
 dates = []
 
-def get_vaccdata(file_path, file_name):
+#html에서 잔여 백신 데이터를 가져오는 함수
+def get_vaccdata(file_name):
     #html읽어오기
     file_path = file_name
     f = open(file_path, encoding = 'utf-8')
@@ -87,24 +86,36 @@ def get_vaccdata(file_path, file_name):
         #병원 주소
         temp.host_addr = now_host.find('span', attrs={'class': '_19kF1'}).get_text()
         #발생 시간
-        temp.time = get_time(file_name)
         temp.date = get_str_date()
 
         #다음 요소 접근을 위해 +1
         i += 1
-        #잔여 백신 발생 병원 리스트에 추가
+
+        #이중 for문 탈출을 위한 변수
+        tf = True
+
+        # 잔여 백신 발생 병원 리스트에 추가
+        if temp.host_name in hosp_name:
+            idx = list(filter(lambda e: hosp_name[e] == temp.host_name, range(len(hosp_name))))
+            for k in idx:
+                if temp.pfizer == hospitals[k].pfizer and temp.moderna == hospitals[k].moderna and temp.AZ == hospitals[k].AZ:
+                    tf = False
+                    break
+            if not tf:
+                continue
+
         hospitals.append(temp)
+        hosp_name.append(temp.host_name)
+        times.append(get_time(file_name))
 
 #클래스 리스트에 있는 요소를 하나씩 접근해 개별 리스트에 저장
 def mk_hosplist():
     for i in hospitals:
-        hosp_name.append(i.host_name)
         hosp_dist.append(i.host_dist)
         hosp_addr.append(i.host_addr)
         pfizer.append(i.pfizer)
         moderna.append(i.moderna)
         AZ.append(i.AZ)
-        times.append(i.time)
         dates.append(i.date)
 
 #데이터의 시간추출
@@ -154,20 +165,16 @@ def get_files(file_path):
     file = glob.glob(txt)
 
     for i in range(len(file)):
-        print(i)
-        get_vaccdata(file_path,file[i])
+        print(i+1,"/",len(file))
+        get_vaccdata(file[i])
 
     mk_hosplist()
     save(file_path)
 
 
 get_files(file_path)
+
+
 # start_time = timeit.default_timer()
-#
-# get_vaccdata(file_path+file_name)
-#
 # terminate_time = timeit.default_timer()
 # print("%f초"%(terminate_time-start_time))
-#
-# mk_hosplist()
-# save(file_path,file_name)
