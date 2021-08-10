@@ -1,4 +1,5 @@
 import glob
+
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
@@ -7,7 +8,7 @@ from datetime import date
 import re
 import timeit
 
-file_path = 'd:/데이터교육/'
+file_path = 'd:/데이터교육/vac0810/'
 file_name = '10_02_26.txt'
 
 #병원 한개의 정보를 담는 클래스
@@ -19,6 +20,8 @@ class host:
     host_name = ''
     host_dist = ''
     host_addr = ''
+    time = ''
+    date = ''
 
 #잔여 백신이 발생한 병원 클래스를 저장할 리스트
 hospitals = []
@@ -28,10 +31,12 @@ hosp_addr = []
 pfizer = []
 moderna = []
 AZ = []
+times = []
+dates = []
 
-def get_vaccdata(file_path):
+def get_vaccdata(file_path, file_name):
     #html읽어오기
-    file_path = file_path
+    file_path = file_name
     f = open(file_path, encoding = 'utf-8')
     html_source = f.read()
     f.close()
@@ -50,7 +55,6 @@ def get_vaccdata(file_path):
     i = 0
     #추출한 잔여 백신 수량 하나씩 접근
     for number_of_vaccines in vaccine_quantity:
-        print(number_of_vaccines)
         #잔여 백신이 없는 경우
         if number_of_vaccines in not_count:
             continue
@@ -82,6 +86,10 @@ def get_vaccdata(file_path):
         temp.host_dist = now_host.find('span', attrs={'class': '_2IJhC ck59y'}).get_text()[7:]
         #병원 주소
         temp.host_addr = now_host.find('span', attrs={'class': '_19kF1'}).get_text()
+        #발생 시간
+        temp.time = get_time(file_name)
+        temp.date = get_str_date()
+
         #다음 요소 접근을 위해 +1
         i += 1
         #잔여 백신 발생 병원 리스트에 추가
@@ -96,20 +104,38 @@ def mk_hosplist():
         pfizer.append(i.pfizer)
         moderna.append(i.moderna)
         AZ.append(i.AZ)
+        times.append(i.time)
+        dates.append(i.date)
 
-#데이터 프레임 생성 및 csv 파일로 저장
-def save(filepath,filename):
+#데이터의 시간추출
+def get_time(str):
     # 10_18_40
-    time=filename[-12:-4]
+    time = str[-12:-4]
     # 10_18_40 -> 10:18:40
     time = time.replace('_', ':')
+    return time
+
+#날짜 추출
+def get_date():
     # 오늘날짜 추출, 연 월 일
     today = date.today()
     # 월일만 추출 ex)0810
-    today_date = '{0:02d}{1:02d}'.format(today.month,today.day)
+    today_date = '{0:02d}{1:02d}'.format(today.month, today.day)
+    return today_date
 
+#날짜 추출
+def get_str_date():
+    # 오늘날짜 추출, 연 월 일
+    today = date.today()
+    # 월일만 추출 ex)0810
+    today_date = '{0:02d}월{1:02d}일'.format(today.month, today.day)
+    return today_date
+
+#데이터 프레임 생성 및 csv 파일로 저장
+def save(filepath):
+    today_date = get_date()
     #데이터 프레임 생성
-    df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital distance':hosp_dist, 'address':hosp_addr, 'time':time, 'date':today_date[:2]+'/'+today_date[2:4]})
+    df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital distance':hosp_dist, 'address':hosp_addr, 'time':times, 'date':dates})
     print(df_vaccine)
     #ex)C:/Users/Administrator/Desktop/잔여백신_raw_data/vaccine_data/
     raw_data_folder = filepath+'vaccine_data/'
@@ -123,12 +149,25 @@ def save(filepath,filename):
     df_vaccine.to_csv(raw_data_folder+'data'+today_date+'.csv', encoding = 'cp949')
     return df_vaccine
 
-start_time = timeit.default_timer()
+def get_files(file_path):
+    txt = file_path+"*.txt"
+    file = glob.glob(txt)
 
-get_vaccdata(file_path+file_name)
+    for i in range(len(file)):
+        print(i)
+        get_vaccdata(file_path,file[i])
 
-terminate_time = timeit.default_timer()
-print("%f초"%(terminate_time-start_time))
+    mk_hosplist()
+    save(file_path)
 
-mk_hosplist()
-save(file_path,file_name)
+
+get_files(file_path)
+# start_time = timeit.default_timer()
+#
+# get_vaccdata(file_path+file_name)
+#
+# terminate_time = timeit.default_timer()
+# print("%f초"%(terminate_time-start_time))
+#
+# mk_hosplist()
+# save(file_path,file_name)
