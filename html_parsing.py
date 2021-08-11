@@ -1,5 +1,4 @@
 import glob
-
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
@@ -154,7 +153,7 @@ def save(filepath):
     df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital distance':hosp_dist, 'address':hosp_addr, 'time':times, 'date':dates})
     print(df_vaccine)
     #ex)C:/Users/Administrator/Desktop/잔여백신_raw_data/vaccine_data/
-    raw_data_folder = filepath+'vaccine_data/'
+    raw_data_folder = filepath
     #raw_data_folder가 있으면 그냥 통과
     if(os.path.isdir(raw_data_folder)):
         pass
@@ -163,19 +162,22 @@ def save(filepath):
         pathlib.Path(raw_data_folder).mkdir(parents = True, exist_ok = True)
     #csv파일로 저장
     df_vaccine.to_csv(raw_data_folder+'data'+today_date+'.csv', encoding = 'cp949')
-    return df_vaccine
 
 def get_files(file_path):
     txt = file_path+"*.txt"
-    file = glob.glob(txt)
+    png = file_path+"*.png"
+    txt_file = glob.glob(txt)
+    png_file = glob.glob(png)
 
-    for i in range(len(file)):
-        print(i+1,"/",len(file))
-        get_vaccdata(file[i])
+    for i in range(len(txt_file)):
+        print(i+1,"/",len(txt_file))
+        get_vaccdata(txt_file[i])
+        os.remove(txt_file[i])
+        if (os.path.isfile(png_file[i])):
+            os.remove(png_file[i])
 
     mk_hosplist()
     save(file_path)
-
 
 start_time = timeit.default_timer()
 get_files(file_path)
