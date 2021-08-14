@@ -8,6 +8,8 @@ from dateutil.relativedelta import relativedelta
 import sqlite3
 import numpy as np
 
+#test
+
 file_path = 'd:/데이터교육/vaccine_data/'
 font_path = 'C:/Windows/Fonts/경기천년제목_Light.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
