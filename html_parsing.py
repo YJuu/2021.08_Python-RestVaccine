@@ -2,12 +2,11 @@ import glob
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
-import pathlib
 from datetime import date
 import re
 import timeit
 
-file_path = 'd:/데이터교육/vac0810/'
+file_path = 'd:/데이터교육/vac0812/'
 
 #병원 한개의 정보를 담는 클래스
 class host:
@@ -32,10 +31,9 @@ times = []
 dates = []
 
 #html에서 잔여 백신 데이터를 가져오는 함수
-def get_vaccdata(file_name):
+def get_vaccdata(filepath):
     #html읽어오기
-    file_path = file_name
-    f = open(file_path, encoding = 'utf-8')
+    f = open(filepath, encoding = 'utf-8')
     html_source = f.read()
     f.close()
     soup = BeautifulSoup(html_source, 'html.parser')
@@ -85,7 +83,7 @@ def get_vaccdata(file_name):
         #병원 주소
         temp.host_addr = now_host.find('span', attrs={'class': '_19kF1'}).get_text()
         #발생 시간
-        temp.date = get_str_date()
+        temp.date = get_date()
 
         #다음 요소 접근을 위해 +1
         i += 1
@@ -110,7 +108,7 @@ def get_vaccdata(file_name):
         #중복된 데이터가 아닌 경우 저장
         hospitals.append(temp)
         hosp_name.append(temp.host_name)
-        times.append(get_time(file_name))
+        times.append(get_time(filepath))
 
 #클래스 리스트에 있는 요소를 하나씩 접근해 개별 리스트에 저장
 def mk_hosplist():
@@ -130,38 +128,19 @@ def get_time(str):
     time = time.replace('_', ':')
     return time
 
-#날짜 추출
+#날짜 월일로 추출
 def get_date():
-    # 오늘날짜 추출, 연 월 일
+    # 오늘날짜 추출, 연-월-일
     today = date.today()
-    # 월일만 추출 ex)0810
-    today_date = '{0:02d}{1:02d}'.format(today.month, today.day)
-    return today_date
-
-#날짜 추출
-def get_str_date():
-    # 오늘날짜 추출, 연 월 일
-    today = date.today()
-    # 월일만 추출 ex)0810
-    today_date = '{0:02d}월{1:02d}일'.format(today.month, today.day)
-    return today_date
+    return today
 
 #데이터 프레임 생성 및 csv 파일로 저장
 def save(filepath):
     today_date = get_date()
     #데이터 프레임 생성
-    df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital distance':hosp_dist, 'address':hosp_addr, 'time':times, 'date':dates})
-    print(df_vaccine)
-    #ex)C:/Users/Administrator/Desktop/잔여백신_raw_data/vaccine_data/
-    raw_data_folder = filepath
-    #raw_data_folder가 있으면 그냥 통과
-    if(os.path.isdir(raw_data_folder)):
-        pass
-    #없으면 생성
-    else:
-        pathlib.Path(raw_data_folder).mkdir(parents = True, exist_ok = True)
+    df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital_distance':hosp_dist, 'address':hosp_addr, 'time':times, 'date':dates})
     #csv파일로 저장
-    df_vaccine.to_csv(raw_data_folder+'data'+today_date+'.csv', encoding = 'cp949')
+    df_vaccine.to_csv(file_path+'data'+str(today_date)+'.csv', encoding = 'cp949')
 
 def get_files(file_path):
     txt = file_path+"*.txt"
@@ -173,7 +152,7 @@ def get_files(file_path):
         print(i+1,"/",len(txt_file))
         get_vaccdata(txt_file[i])
         os.remove(txt_file[i])
-        if (os.path.isfile(png_file[i])):
+        if png_file and (os.path.isfile(png_file[i])):
             os.remove(png_file[i])
 
     mk_hosplist()
