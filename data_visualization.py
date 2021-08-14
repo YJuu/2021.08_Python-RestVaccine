@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-from matplotlib import font_manager, rc
+from matplotlib import font_manager
 import matplotlib
+from matplotlib.widgets import Slider
+from matplotlib.ticker import AutoLocator
 import pandas as pd
 import glob
 from datetime import datetime, timedelta
@@ -8,10 +10,8 @@ from dateutil.relativedelta import relativedelta
 import sqlite3
 import numpy as np
 
-#test
-
-file_path = 'd:/데이터교육/vaccine_data/'
-font_path = 'C:/Windows/Fonts/경기천년제목_Light.ttf'
+file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data/'
+font_path = 'C:/Windows/Fonts/08SeoulHangangM.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
 matplotlib.rc('font',family = font_name)
 
@@ -117,7 +117,7 @@ def yesterday_vacc():
     explode = [0.05,0.05,0.05]
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
-    text = [yes_AZ, yes_pfizer, yes_moderna]
+
     plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
     plt.show()
 
@@ -150,7 +150,7 @@ def acc_vacc():
 
     print("누적",tot_vacc,"건")
 
-#병원별 정렬 - opt : 정렬 단위
+#병원별 누적 발생량 - opt : 정렬 단위
 #1:전체-전체, 2:전체-일주일, 3:전체-어제, 4:!AZ-전체, 5:!AZ-일주일, 6:!AZ-어제
 def hosp_acc(opt):
     yes = datetime.today().date() - timedelta(days=1)
@@ -165,22 +165,22 @@ def hosp_acc(opt):
 
     #전체-전체
     if opt == 1:
-        query = "select hospital, sum(AZ+pfizer+moderna) as tot from vacc_occ group by hospital order by tot desc"
+        query = "select hospital, sum(AZ+pfizer+moderna) as tot, count(date) from vacc_occ where AZ+pfizer+moderna != 0 group by hospital order by tot desc"
     #전체-일주일
-    elif opt == 3:
-        query = "select hospital, sum(AZ+pfizer+moderna) as tot from vacc_occ where date between '"+week+"' and '"+yes+"'group by hospital order by tot desc"
-    #전체 - 어제
-    elif opt ==5:
-        query = "select hospital, sum(AZ+pfizer+moderna) as tot from vacc_occ where date = '"+yes+"' group by hospital order by tot desc"
-    #!AZ - 전체
     elif opt == 2:
-        query = "select hospital, sum(pfizer+moderna) as tot from vacc_occ group by hospital order by tot desc"
-    # !AZ - 일주일
+        query = "select hospital, sum(AZ+pfizer+moderna) as tot,count(date) from vacc_occ where date between '"+week+"' and '"+yes+"'group by hospital order by tot desc"
+    #전체 - 어제
+    elif opt == 3:
+        query = "select hospital, sum(AZ+pfizer+moderna) as tot,count(date) from vacc_occ where date = '"+yes+"' group by hospital order by tot desc"
+    #!AZ - 전체
     elif opt == 4:
-        query = "select hospital, sum(pfizer+moderna) as tot from vacc_occ where date between '" + week + "' and '" + yes + "'group by hospital order by tot desc"
+        query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ group by hospital order by tot desc"
+    # !AZ - 일주일
+    elif opt == 5:
+        query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ where date between '" + week + "' and '" + yes + "'group by hospital order by tot desc"
     # !AZ - 어제
     elif opt == 6:
-        query = "select hospital, sum(pfizer+moderna) as tot from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
+        query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
 
     #쿼리 실행
     cur.execute(query)
@@ -191,23 +191,33 @@ def hosp_acc(opt):
         return
 
     else:
-        #병원과 잔여 백신 발생량을 저장할 리스트
+        #병원과 잔여 백신 발생량, 발생 횟수를 저장할 리스트
         hosp = []
         cnt = []
+        num = []
+        num_show = []
 
         #쿼리 실행 결과에서 리스트로 데이터 추출
         for i in range(10):
             hosp.append(acc[i][0])
             cnt.append(acc[i][1])
-
-        #추출한 리스트를 역순정렬
-        hosp.reverse()
-        cnt.reverse()
+            num.append(acc[i][2])
+            num_show.append(acc[i][2] * 4 + 20)
 
         #시각화
-        plt.figure(figsize=(12,4))
-        plt.grid(True, axis='x', alpha = 0.5, linestyle='--', color='#d7d7d7')
-        plt.barh(hosp, cnt,color='#2195f2')
+        plt.figure(figsize=(14,4))
+        plt.grid(True, axis='y', alpha = 0.5, linestyle='--', color='#d7d7d7')
+        plt.bar(hosp, cnt, color=col3, width = 0.4, label='발생량')
+        plt.plot(hosp, num_show, color = col7, marker='*', markersize=10,label='발생 횟수')
+
+        #횟수 텍스트로 표시
+        for i, v in enumerate(hosp):
+            plt.text(v, num_show[i]-1, str(num[i])+'회',
+                     fontsize = 10, color = col1,
+                     horizontalalignment='center',
+                     verticalalignment = 'top')
+
+        plt.legend()
         plt.show()
 
 #병원별 평균 발생량
@@ -226,8 +236,6 @@ def avg_occ():
             """
     cur.execute(query)
     cnt = cur.fetchall()[0][0]
-    print(sum[0][1])
-    print(cnt)
 
     if not sum:
         print("결과가 없습니다")
@@ -248,14 +256,90 @@ def avg_occ():
 #특정 병원 정렬
 
 #일별 잔여 백신 발생 추이 - 전체, AZ, 화이자, 모더나
+def acc_trend():
+    #데이터베이스에서 일별 전체 발생량, AZ발생량, 화이자 발생량, 모더나 발생량, 날짜 추출
+    query = """
+            select sum(AZ+pfizer+moderna) as tot, sum(AZ), sum(pfizer), sum(moderna), date
+            from vacc_occ
+            group by date
+            """
+    cur.execute(query)
+    trend = cur.fetchall()
+
+    tot = []
+    AZ = []
+    pfizer = []
+    moderna = []
+    date = []
+
+    #쿼리문의 결과에 하나씩 접근하여 리스트에 저장
+    for i in range(len(trend)):
+        tot.append(trend[i][0])
+        AZ.append(trend[i][1])
+        pfizer.append(trend[i][2])
+        moderna.append(trend[i][3])
+        date.append(trend[i][4][:-9])
+
+    #시각화
+    plt.plot(date, tot, color = col7, marker='*', markersize=10,label='전체 발생량')
+    plt.plot(date, AZ, color = col2, marker='o', markersize=5,label='AZ')
+    plt.plot(date, pfizer, color = col4, marker='s', markersize=5,label='화이자')
+    plt.plot(date, moderna, color = col5, marker='^', markersize=5,label='모더나')
+    plt.legend()
+    plt.show()
 
 #백신 발생 시간대
 
 #시간대별 병원 - 시간대에 백신 데이터가 있으면 cnt > cnt가 많은 순으로
 
+#근처 100개 병원 정보 출력
+def show_hosps():
+    query = """
+            select hospital, hospital_distance, address from vacc
+            group by hospital
+            """
+    cur.execute(query)
+    hospital = cur.fetchall()
+
+    query = """
+            select sum(AZ+pfizer+moderna) from vacc_occ
+            group by hospital
+            """
+    cur.execute(query)
+    total = cur.fetchall()
+
+    column = ["병원명", "거리", "주소", "누적 백신 발생량"]
+    df = pd.DataFrame(columns = column)
+
+    for i in range(len(hospital)):
+        hosp = hospital[i][0]
+        dist = hospital[i][1]
+        add = hospital[i][2]
+        tot = total[i][0]
+
+        df.loc[len(df)] = [hosp, dist, add, tot]
+
+    plt.axis('tight')
+    plt.axis('off')
+    table = plt.table(cellText=df.values,
+              colLabels=df.columns,
+              colColours=[col4]*4,
+              rowLoc = 'right',
+              fontsize = 30,
+              loc = "center")
+    table.scale(1,1.5)
+    axcolor = col3
+    axamp = plt.axes([0.25,0.15,0.65,0.03], facecolor=axcolor)
+    axfreq = plt.axes([0.25,0.15,0.65,0.03],facecolor=axcolor)
+    sfreq = Slider(axfreq, 'Freq',0.1,30.0,valinit=f0)
+    samp = Slider(axamp,'Amp',0.1,10.0,valinit=a0)
+
+    plt.show()
 
 get_files(file_path)
 #yesterday_vacc()
-#hosp_acc(2)
+#hosp_acc(4)
 #acc_vacc()
-avg_occ()
+#avg_occ()
+#acc_trend()
+show_hosps()
