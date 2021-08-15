@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
+import matplotlib.widgets as pwd
 import matplotlib
-from matplotlib.widgets import Slider
-from matplotlib.ticker import AutoLocator
 import pandas as pd
 import glob
 from datetime import datetime, timedelta
@@ -10,8 +9,8 @@ from dateutil.relativedelta import relativedelta
 import sqlite3
 import numpy as np
 
-file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data/'
-font_path = 'C:/Windows/Fonts/08SeoulHangangM.ttf'
+file_path = 'D:/데이터교육/vaccine_data/'
+font_path = 'C:/Windows/Fonts/경기천년제목_Light.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
 matplotlib.rc('font',family = font_name)
 
@@ -119,6 +118,7 @@ def yesterday_vacc():
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
 
     plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+    plt.tight_layout()
     plt.show()
 
 #누적 백신 발생량
@@ -146,6 +146,7 @@ def acc_vacc():
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
     plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+    plt.tight_layout()
     plt.show()
 
     print("누적",tot_vacc,"건")
@@ -205,10 +206,11 @@ def hosp_acc(opt):
             num_show.append(acc[i][2] * 4 + 20)
 
         #시각화
-        plt.figure(figsize=(14,4))
+        plt.figure(figsize=(12,4))
         plt.grid(True, axis='y', alpha = 0.5, linestyle='--', color='#d7d7d7')
         plt.bar(hosp, cnt, color=col3, width = 0.4, label='발생량')
         plt.plot(hosp, num_show, color = col7, marker='*', markersize=10,label='발생 횟수')
+        plt.tight_layout()
 
         #횟수 텍스트로 표시
         for i, v in enumerate(hosp):
@@ -220,7 +222,7 @@ def hosp_acc(opt):
         plt.legend()
         plt.show()
 
-#병원별 평균 발생량
+#병원별 평균 발생량 ing
 def avg_occ():
     query = """
             select  hospital, sum(AZ+pfizer+moderna) as tot, sum(AZ), sum(pfizer),sum(moderna) 
@@ -285,6 +287,7 @@ def acc_trend():
     plt.plot(date, AZ, color = col2, marker='o', markersize=5,label='AZ')
     plt.plot(date, pfizer, color = col4, marker='s', markersize=5,label='화이자')
     plt.plot(date, moderna, color = col5, marker='^', markersize=5,label='모더나')
+    plt.tight_layout()
     plt.legend()
     plt.show()
 
@@ -308,37 +311,115 @@ def show_hosps():
     cur.execute(query)
     total = cur.fetchall()
 
-    column = ["병원명", "거리", "주소", "누적 백신 발생량"]
+    column = ["병원명", "거리", "주소", "발생량"]
     df = pd.DataFrame(columns = column)
+    df2 = pd.DataFrame(columns = column)
+    df3 = pd.DataFrame(columns = column)
+    df4 = pd.DataFrame(columns = column)
+    cnt = len(hospital)
 
-    for i in range(len(hospital)):
+    for i in range(cnt):
         hosp = hospital[i][0]
         dist = hospital[i][1]
         add = hospital[i][2]
         tot = total[i][0]
+        t = cnt/4
 
-        df.loc[len(df)] = [hosp, dist, add, tot]
+        if i<t:
+            df.loc[len(df)] = [hosp, dist, add, tot]
+        elif i<t*2:
+            df2.loc[len(df2)] = [hosp, dist, add, tot]
+        elif i<t*3:
+            df3.loc[len(df3)] = [hosp, dist, add, tot]
+        else:
+            df4.loc[len(df4)] = [hosp, dist, add, tot]
 
-    plt.axis('tight')
-    plt.axis('off')
-    table = plt.table(cellText=df.values,
-              colLabels=df.columns,
-              colColours=[col4]*4,
-              rowLoc = 'right',
-              fontsize = 30,
-              loc = "center")
-    table.scale(1,1.5)
-    axcolor = col3
-    axamp = plt.axes([0.25,0.15,0.65,0.03], facecolor=axcolor)
-    axfreq = plt.axes([0.25,0.15,0.65,0.03],facecolor=axcolor)
-    sfreq = Slider(axfreq, 'Freq',0.1,30.0,valinit=f0)
-    samp = Slider(axamp,'Amp',0.1,10.0,valinit=a0)
+    fig = plt.figure(figsize=(12, 4))
+    ax = fig.subplots()
+
+    ax.axis('tight')
+    ax.axis('off')
+    table1 = ax.table(cellText=df.values,
+                      colLabels=df.columns,
+                      colColours=[col4] * 4,
+                      cellLoc='left',
+                      colWidths=[0.4, 0.1, 0.4, 0.1],
+                      loc="center")
+
+    table2 = ax.table(cellText=df2.values,
+                      colLabels=df2.columns,
+                      colColours=[col4] * 4,
+                      cellLoc='left',
+                      colWidths=[0.4, 0.1, 0.4, 0.1],
+                      loc="center")
+
+    table3 = ax.table(cellText=df3.values,
+                      colLabels=df3.columns,
+                      colColours=[col4] * 4,
+                      cellLoc='left',
+                      colWidths=[0.4, 0.1, 0.4, 0.1],
+                      loc="center")
+
+    table4 = ax.table(cellText=df4.values,
+                      colLabels=df4.columns,
+                      colColours=[col4] * 4,
+                      cellLoc='left',
+                      colWidths=[0.4, 0.1, 0.4, 0.1],
+                      loc="center")
+
+    table1.auto_set_font_size(False)
+    table1.set_fontsize(12)
+    table1.scale(1,1.2)
+    table2.auto_set_font_size(False)
+    table2.set_fontsize(12)
+    table2.scale(1, 1.2)
+    table3.auto_set_font_size(False)
+    table3.set_fontsize(12)
+    table3.scale(1, 1.2)
+    table4.auto_set_font_size(False)
+    table4.set_fontsize(12)
+    table4.scale(1, 1.2)
+
+    table2.set_visible(False)
+    table3.set_visible(False)
+    table4.set_visible(False)
+
+    labels = ('1','2','3','4')
+    tables = [table1,table2,table3,table4]
+
+    def func(label):
+        idx = labels.index(label)
+        if idx == 0:
+            tables[0].set_visible(True)
+            tables[1].set_visible(False)
+            tables[2].set_visible(False)
+            tables[3].set_visible(False)
+        elif idx == 1:
+            tables[0].set_visible(False)
+            tables[1].set_visible(True)
+            tables[2].set_visible(False)
+            tables[3].set_visible(False)
+        elif idx == 2:
+            tables[0].set_visible(False)
+            tables[1].set_visible(False)
+            tables[2].set_visible(True)
+            tables[3].set_visible(False)
+        else:
+            tables[0].set_visible(False)
+            tables[1].set_visible(False)
+            tables[2].set_visible(False)
+            tables[3].set_visible(True)
+        fig.canvas.draw()
+
+    axes  = plt.axes([0.02, 0.35, 0.08, 0.2])
+    radio = pwd.RadioButtons(axes, labels,activecolor=col2)
+    radio.on_clicked(func)
 
     plt.show()
 
 get_files(file_path)
 #yesterday_vacc()
-#hosp_acc(4)
+#hosp_acc(1)
 #acc_vacc()
 #avg_occ()
 #acc_trend()
