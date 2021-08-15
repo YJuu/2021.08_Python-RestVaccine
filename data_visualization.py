@@ -159,78 +159,95 @@ def acc_vacc():
 
     print("누적",tot_vacc,"건")
 
-#옵션에 따라서 쿼리문 실행 결과 반환
-def opt_query(opt):
-    yes = datetime.today().date() - timedelta(days=1)
-    yes = str(yes) + " 00:00:00"
-    # yes = "2021-08-12 00:00:00"
-
-    # 전체-전체
-    if opt == 1:
-        query = "select hospital, sum(AZ+pfizer+moderna) as tot, count(date) from vacc_occ where AZ+pfizer+moderna != 0 group by hospital order by tot desc"
-    # 전체 - 어제
-    elif opt == 2:
-        query = "select hospital, sum(AZ+pfizer+moderna) as tot,count(date) from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
-    # !AZ - 전체
-    elif opt == 3:
-        query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ group by hospital order by tot desc"
-    # !AZ - 어제
-    else:
-        query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
-
-    # 쿼리 실행
-    cur.execute(query)
-    acc = cur.fetchmany(10)
-
-    # 병원과 잔여 백신 발생량, 발생 횟수를 저장할 리스트
-    hosp = []
-    cnt = []
-    num = []
-    num_show = []
-
-    if acc:
-        # 쿼리 실행 결과에서 리스트로 데이터 추출
-        for i in range(10):
-            hosp.append(acc[i][0])
-            cnt.append(acc[i][1])
-            num.append(acc[i][2])
-            num_show.append(acc[i][2] * 4 + 20)
-
-    temp = hospital_acc()
-    temp.hosp = hosp
-    temp.cnt = cnt
-    temp.num = num
-    temp.num_show = num_show
-
-    return temp
-
-#옵션에 따라 그래프 출력
-def show_acc(opt):
-    plt.figure(figsize=(12,4))
-    temp = opt_query(opt)
-    plt.bar(temp.hosp, temp.cnt, color=col3, width=0.4, label='발생량')
-    plt.plot(temp.hosp, temp.num_show, color=col7, marker='*', markersize=10, label='발생 횟수')
-    for i, v in enumerate(temp.hosp):
-        plt.text(v, temp.num_show[i] - 1, str(temp.num[i]) + '회',
-                fontsize=10, color=col1,
-                horizontalalignment='center',
-                verticalalignment='top')
-    plt.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
-    plt.legend()
-
-def acc_opt():
-    if opt_day ==0 and opt_AZ == 0:opt = 1
-    elif opt_day ==1 and opt_AZ == 0:opt = 2
-    elif opt_day ==0 and opt_AZ == 1:opt = 3
-    else: opt = 4
-    show_acc(opt)
-
 #병원별 누적 발생량 - opt : 정렬 단위
 #1:전체-전체, 2:전체-어제, 3:!AZ-전체,  4:!AZ-어제
 def hosp_acc():
 
     labels1 = ['전체', '어제']
     labels2 = ['AZ포함', 'AZ미포함']
+    fig = plt.figure(figsize=(14,6))
+    ax = fig.add_subplot(1,1,1)
+
+    # 옵션에 따라서 쿼리문 실행 결과 반환
+    def opt_query(opt):
+        yes = datetime.today().date() - timedelta(days=1)
+        yes = str(yes) + " 00:00:00"
+        # yes = "2021-08-12 00:00:00"
+
+        # 전체-전체
+        if opt == 1:
+            query = "select hospital, sum(AZ+pfizer+moderna) as tot, count(date) from vacc_occ where AZ+pfizer+moderna != 0 group by hospital order by tot desc"
+        # 전체 - 어제
+        elif opt == 2:
+            query = "select hospital, sum(AZ+pfizer+moderna) as tot,count(date) from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
+        # !AZ - 전체
+        elif opt == 3:
+            query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ group by hospital order by tot desc"
+        # !AZ - 어제
+        else:
+            query = "select hospital, sum(pfizer+moderna) as tot, count(date) from vacc_occ where date = '" + yes + "' group by hospital order by tot desc"
+
+        # 쿼리 실행
+        cur.execute(query)
+        acc = cur.fetchmany(10)
+
+        # 병원과 잔여 백신 발생량, 발생 횟수를 저장할 리스트
+        hosp = []
+        cnt = []
+        num = []
+        num_show = []
+
+        if acc:
+            # 쿼리 실행 결과에서 리스트로 데이터 추출
+            for i in range(10):
+                hosp.append(acc[i][0])
+                cnt.append(acc[i][1])
+                num.append(acc[i][2])
+                num_show.append(acc[i][2] * 4 + 20)
+
+        temp = hospital_acc()
+        temp.hosp = hosp
+        temp.cnt = cnt
+        temp.num = num
+        temp.num_show = num_show
+
+        return temp
+
+    # 옵션에 따라 그래프 출력
+    def show_acc(opt):
+        temp = opt_query(opt)
+
+        if temp.hosp:
+            ax.cla()
+            ax.bar(temp.hosp, temp.cnt, color=col3, width=0.4, label='발생량')
+            ax.plot(temp.hosp, temp.num_show, color=col7, marker='*', markersize=10, label='발생 횟수')
+            for i, v in enumerate(temp.hosp):
+                ax.text(v, temp.num_show[i] - 1, str(temp.num[i]) + '회',
+                         fontsize=10, color=col1,
+                         horizontalalignment='center',
+                         verticalalignment='top')
+            ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
+            ax.legend()
+            ax.axes.xaxis.set_visible(True)
+            ax.axes.yaxis.set_visible(True)
+        else:
+            ax.cla()
+            ax.axes.xaxis.set_visible(False)
+            ax.axes.yaxis.set_visible(False)
+            ax.text(0.5,0.5,'결과가 없습니다',horizontalalignment = 'center',size=30)
+
+        fig.canvas.draw()
+
+    def acc_opt():
+        if opt_day == 0 and opt_AZ == 0:
+            opt = 1
+        elif opt_day == 1 and opt_AZ == 0:
+            opt = 2
+        elif opt_day == 0 and opt_AZ == 1:
+            opt = 3
+        else:
+            opt = 4
+        show_acc(opt)
 
     def r1func(label):
         global opt_day
@@ -238,7 +255,6 @@ def hosp_acc():
         if idx == 0: opt_day = 0
         else: opt_day = 1
         acc_opt()
-        plt.show()
 
     def r2func(label):
         global opt_AZ
@@ -246,7 +262,8 @@ def hosp_acc():
         if idx == 0: opt_AZ = 0
         else: opt_AZ = 1
         acc_opt()
-        plt.show()
+
+    show_acc(1)
 
     axes1 = plt.axes([0.02, 0.6, 0.08, 0.2])
     axes2 = plt.axes([0.02, 0.2, 0.08, 0.2])
@@ -254,8 +271,6 @@ def hosp_acc():
     radio2 = pwd.RadioButtons(axes2, labels2, activecolor=col2)
     radio1.on_clicked(r1func)
     radio2.on_clicked(r2func)
-
-
 
     plt.show()
 
