@@ -15,7 +15,7 @@ import os
 # 페이지 로드를 위한 기본 정보
 webdriver_path = 'd:/programfiles/chromedriver/chromedriver.exe' #사용자에게 입력받을 정보
 vac_add = 'https://m.place.naver.com/rest/vaccine'
-file_path = os.getcwd()+'/'
+file_path = os.getcwd()+'/data/'
 
 pyautogui.FAILSAFE = False
 
@@ -81,5 +81,6 @@ def crop_func():
 
 
 if __name__ == "__main__":
+    print(file_path)
     set_driver('d:/programfiles/chromedriver/chromedriver.exe')
     crop_func()

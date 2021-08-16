@@ -4,9 +4,8 @@ import pandas as pd
 import os
 from datetime import date
 import re
-import timeit
 
-file_path = 'd:/데이터교육/vac0812/'
+file_path = os.getcwd()+'/data/'
 
 #병원 한개의 정보를 담는 클래스
 class host:
@@ -31,9 +30,9 @@ times = []
 dates = []
 
 #html에서 잔여 백신 데이터를 가져오는 함수
-def get_vaccdata(filepath):
+def get_vaccdata(filename):
     #html읽어오기
-    f = open(filepath, encoding = 'utf-8')
+    f = open(filename, encoding = 'utf-8')
     html_source = f.read()
     f.close()
     soup = BeautifulSoup(html_source, 'html.parser')
@@ -108,7 +107,7 @@ def get_vaccdata(filepath):
         #중복된 데이터가 아닌 경우 저장
         hospitals.append(temp)
         hosp_name.append(temp.host_name)
-        times.append(get_time(filepath))
+        times.append(get_time(filename))
 
 #클래스 리스트에 있는 요소를 하나씩 접근해 개별 리스트에 저장
 def mk_hosplist():
@@ -135,14 +134,14 @@ def get_date():
     return today
 
 #데이터 프레임 생성 및 csv 파일로 저장
-def save(filepath):
+def save():
     today_date = get_date()
     #데이터 프레임 생성
     df_vaccine = pd.DataFrame({'hospital':hosp_name, 'AZ':AZ, 'pfizer':pfizer, 'moderna':moderna, 'hospital_distance':hosp_dist, 'address':hosp_addr, 'time':times, 'date':dates})
     #csv파일로 저장
     df_vaccine.to_csv(file_path+'data'+str(today_date)+'.csv', encoding = 'cp949')
 
-def get_files(file_path):
+def get_files():
     txt = file_path+"*.txt"
     png = file_path+"*.png"
     txt_file = glob.glob(txt)
@@ -156,9 +155,7 @@ def get_files(file_path):
             os.remove(png_file[i])
 
     mk_hosplist()
-    save(file_path)
+    save()
 
-start_time = timeit.default_timer()
-get_files(file_path)
-terminate_time = timeit.default_timer()
-print("%f초"%(terminate_time-start_time))
+if __name__ == "__main__":
+    get_files()

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import sqlite3
 import os
 
-file_path = os.getcwd()+'/'
+file_path = os.getcwd()+'/data/'
 font_path = '경기천년제목_Light.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
 matplotlib.rc('font',family = font_name)
@@ -36,7 +36,7 @@ conn = sqlite3.connect(':memory:')
 cur = conn.cursor()
 
 #csv파일들을 읽어오는 함수
-def get_files(file_path):
+def get_files():
     #경로 내의 모든 csv파일명을 리스트로 생성
     csv = file_path+"*.csv"
     csv_file = glob.glob(csv)
@@ -125,16 +125,19 @@ def yesterday_vacc():
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
 
-    plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+    if vacc[0] != None:
+        plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+        plt.title("전체 발생량 : " + str(yes_vacc) + "건", size=20)
+    else:
+        ax = plt.gca()
+        ax.axes.xaxis.set_visible(False)
+        ax.axes.yaxis.set_visible(False)
+        plt.text(0.5, 0.5, "어제의 데이터가 없습니다", horizontalalignment='center', size=30)
     plt.tight_layout()
     plt.show()
 
 #누적 백신 발생량
 def acc_vacc():
-    yes = datetime.today().date() - timedelta(days=1)
-    #yes = str(yes) + " 00:00:00"
-    yes = "2021-08-12 00:00:00"
-
     query = """
             select sum(AZ+pfizer+moderna), sum(AZ), sum(pfizer), sum(moderna)
             from vacc_occ
@@ -154,10 +157,10 @@ def acc_vacc():
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
     plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+    plt.title("전체 발생량 : "+str(tot_vacc)+"건",size=20)
     plt.tight_layout()
     plt.show()
 
-    print("누적",tot_vacc,"건")
 
 #병원별 누적 발생량 - opt : 정렬 단위
 #1:전체-전체, 2:전체-어제, 3:!AZ-전체,  4:!AZ-어제
@@ -636,11 +639,11 @@ def show_hosps():
     plt.show()
 
 if __name__ == "__main__":
-    get_files(file_path)
+    get_files()
     yesterday_vacc()
-    hosp_acc()
-    acc_vacc()
-    acc_trend()
-    show_hosps()
-    vacc_time()
-    time_hosp()
+    #hosp_acc()
+    #acc_vacc()
+    #acc_trend()
+    #show_hosps()
+    #vacc_time()
+    #time_hosp()
