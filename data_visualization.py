@@ -217,6 +217,7 @@ def hosp_acc():
     def show_acc(opt):
         temp = opt_query(opt)
 
+        #데이터가 있는 경우
         if temp.hosp:
             ax.cla()
             ax.bar(temp.hosp, temp.cnt, color=col3, width=0.4, label='발생량')
@@ -230,6 +231,7 @@ def hosp_acc():
             ax.legend()
             ax.axes.xaxis.set_visible(True)
             ax.axes.yaxis.set_visible(True)
+        #데이터가 없는 경우
         else:
             ax.cla()
             ax.axes.xaxis.set_visible(False)
@@ -238,6 +240,7 @@ def hosp_acc():
 
         fig.canvas.draw()
 
+    #라디오 버튼에 따른 옵션
     def acc_opt():
         if opt_day == 0 and opt_AZ == 0:
             opt = 1
@@ -249,13 +252,13 @@ def hosp_acc():
             opt = 4
         show_acc(opt)
 
+    #라디오 버튼에 연결할 함수
     def r1func(label):
         global opt_day
         idx = labels1.index(label)
         if idx == 0: opt_day = 0
         else: opt_day = 1
         acc_opt()
-
     def r2func(label):
         global opt_AZ
         idx = labels2.index(label)
@@ -307,8 +310,6 @@ def avg_occ():
         avg_pfizer.append(sum[i][3]/cnt)
         avg_moderna.append(sum[i][4]/cnt)
 
-#특정 병원 정렬
-
 #일별 잔여 백신 발생 추이 - 전체, AZ, 화이자, 모더나
 def acc_trend():
     #데이터베이스에서 일별 전체 발생량, AZ발생량, 화이자 발생량, 모더나 발생량, 날짜 추출
@@ -344,6 +345,85 @@ def acc_trend():
     plt.show()
 
 #백신 발생 시간대
+def vacc_time():
+    query = """
+            select min(time) from vacc
+            group by hospital, date order by time desc
+            """
+    cur.execute(query)
+    result1 = cur.fetchall()
+
+    query = """
+                select min(time) from vacc
+                where pfizer != 0 or moderna != 0 
+                group by hospital, date order by time desc
+                """
+    cur.execute(query)
+    result2 = cur.fetchall()
+
+    time = ['9시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시']
+    time_cnt_AZ = [0,0,0,0,0,0,0,0,0]
+    time_cnt = [0,0,0,0,0,0,0,0,0]
+
+    for i in range(len(result1)):
+        time1 = int(str(result1[i][0])[-8:-6])
+        time_cnt_AZ[time1-9] += 1
+
+    for i in range(len(result2)):
+        time2 = int(str(result2[i][0])[-8:-6])
+        time_cnt[time2 - 9] += 1
+
+    print(time_cnt)
+    print(time_cnt_AZ)
+
+    fig = plt.figure(figsize=(14, 6))
+    ax = fig.add_subplot(1, 1, 1)
+
+    def func1():
+        ax.cla()
+        ax.bar(time, time_cnt_AZ, color=col3, width=0.4, label='발생량')
+        ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
+
+        for i, v in enumerate(time):
+            ax.text(v, time_cnt_AZ[i], str(time_cnt_AZ[i]) + '회',
+                     fontsize=10, color=col1,
+                     horizontalalignment='center',
+                     verticalalignment='bottom')
+        ax.axes.xaxis.set_visible(True)
+        ax.axes.yaxis.set_visible(True)
+
+        fig.canvas.draw()
+
+    def func2():
+        ax.cla()
+        ax.bar(time, time_cnt, color=col3, width=0.4, label='발생량')
+        ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
+
+        for i, v in enumerate(time):
+            ax.text(v, time_cnt[i], str(time_cnt[i]) + '회',
+                     fontsize=10, color=col1,
+                     horizontalalignment='center',
+                     verticalalignment='bottom')
+        ax.axes.xaxis.set_visible(True)
+        ax.axes.yaxis.set_visible(True)
+
+        fig.canvas.draw()
+
+    labels = ["AZ포함","AZ미포함"]
+
+    def rfunc(label):
+        idx = labels.index(label)
+        if idx == 0:
+            func1()
+        else:
+            func2()
+
+    axes = plt.axes([0.02, 0.6, 0.08, 0.2])
+    radio = pwd.RadioButtons(axes, labels, activecolor=col2)
+    radio.on_clicked(rfunc)
+    func1()
+
+    plt.show()
 
 #시간대별 병원 - 시간대에 백신 데이터가 있으면 cnt > cnt가 많은 순으로
 
@@ -471,8 +551,9 @@ def show_hosps():
 
 get_files(file_path)
 #yesterday_vacc()
-hosp_acc()
+#hosp_acc()
 #acc_vacc()
 #avg_occ()
 #acc_trend()
 #show_hosps()
+vacc_time()
