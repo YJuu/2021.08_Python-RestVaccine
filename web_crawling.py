@@ -34,7 +34,7 @@ def crop_func():
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = wd.Chrome(webdriver_path, options=options)
     driver.get(vac_add)
-    time.sleep(5)
+    driver.implicitly_wait(5)
 
     titles = gw.getAllTitles()
     idx = titles.index("네이버 플레이스 - Chrome")

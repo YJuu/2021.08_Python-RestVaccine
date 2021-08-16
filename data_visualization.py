@@ -161,14 +161,13 @@ def acc_vacc():
     plt.tight_layout()
     plt.show()
 
-
 #병원별 누적 발생량 - opt : 정렬 단위
 #1:전체-전체, 2:전체-어제, 3:!AZ-전체,  4:!AZ-어제
 def hosp_acc():
 
     labels1 = ['전체', '어제']
     labels2 = ['AZ포함', 'AZ미포함']
-    fig = plt.figure(figsize=(14,6))
+    fig = plt.figure(figsize=(14,8))
     ax = fig.add_subplot(1,1,1)
 
     # 옵션에 따라서 쿼리문 실행 결과 반환
@@ -231,10 +230,12 @@ def hosp_acc():
                          horizontalalignment='center',
                          verticalalignment='top')
             ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
-            ax.legend()
-            ax.set_xticklabels(temp.hosp, rotation=20, ha="center")
+            ax.legend(loc = "upper right")
+            ax.set_ylim([0, max(temp.num_show) + 10])
+            ax.set_xticklabels(temp.hosp, rotation=30, ha="right")
             ax.axes.xaxis.set_visible(True)
             ax.axes.yaxis.set_visible(True)
+
         #데이터가 없는 경우
         else:
             ax.cla()
@@ -270,8 +271,8 @@ def hosp_acc():
 
     show_acc(1)
 
-    axes1 = plt.axes([0.02, 0.6, 0.08, 0.2])
-    axes2 = plt.axes([0.02, 0.2, 0.08, 0.2])
+    axes1 = plt.axes([0.01, 0.6, 0.08, 0.15])
+    axes2 = plt.axes([0.01, 0.2, 0.08, 0.15])
     radio1 = pwd.RadioButtons(axes1, labels1, activecolor=col2)
     radio2 = pwd.RadioButtons(axes2, labels2, activecolor=col2)
     radio1.on_clicked(r1func)
@@ -309,6 +310,7 @@ def acc_trend():
     plt.plot(date, AZ, color = col2, marker='o', markersize=5,label='AZ')
     plt.plot(date, pfizer, color = col4, marker='s', markersize=5,label='화이자')
     plt.plot(date, moderna, color = col5, marker='^', markersize=5,label='모더나')
+    plt.xticks(rotation=30, ha="center")
     plt.tight_layout()
     plt.legend()
     plt.show()
@@ -384,7 +386,7 @@ def vacc_time():
         else:
             func2()
 
-    axes = plt.axes([0.02, 0.6, 0.08, 0.2])
+    axes = plt.axes([0.02, 0.4, 0.08, 0.2])
     radio = pwd.RadioButtons(axes, labels, activecolor=col2)
     radio.on_clicked(rfunc)
     func1()
@@ -456,7 +458,7 @@ def time_hosp():
         hosps2.append(temp_hosp2)
         cnts2.append(temp_cnt2)
 
-    fig = plt.figure(figsize=(14, 6))
+    fig = plt.figure(figsize=(16, 6))
     ax = fig.add_subplot(1, 1, 1)
 
     #선택 시간대에 따라 시각화
@@ -465,7 +467,7 @@ def time_hosp():
             ax.cla()
             ax.bar(hosp[t], cnt[t], color=col3, width=0.4, label='발생량')
             ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
-            ax.set_xticklabels(hosp[t],rotation = 20, ha="center")
+            ax.set_xticklabels(hosp[t],rotation = 30, ha="right")
 
             for i, v in enumerate(hosp[t]):
                 ax.text(v, cnt[t][i], str(cnt[t][i]) + '회',
@@ -555,7 +557,7 @@ def show_hosps():
         else:
             df4.loc[len(df4)] = [hosp, dist, add, tot]
 
-    fig = plt.figure(figsize=(12, 4))
+    fig = plt.figure(figsize=(14, 6))
     ax = fig.subplots()
 
     ax.axis('tight')
