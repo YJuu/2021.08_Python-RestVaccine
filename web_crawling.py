@@ -41,10 +41,9 @@ def crop_func():
     npb = npwd.bottom - 70
     np_crop = (npl, npt, npr, npb)
 
-    re_pos = pg.locateOnScreen('refresh.png')
-    pos = pg.center(re_pos)
+    refresh = driver.find_element_by_xpath('//*[@id="_list_scroll_container"]/div/div/div[1]/div/div/div[2]/a')
+    refresh.click()
 
-    pg.click(pos.x, pos.y)
     img = Ig.grab(np_crop)
     img.show()
 
@@ -61,7 +60,7 @@ def crop_func():
         if keyboard.is_pressed("esc"): #6시에 종료
             driver.quit() #브라우저 완전종료
             break
-        pg.click(pos.x, pos.y)
+        refresh.click()
         driver.implicitly_wait(2)
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
