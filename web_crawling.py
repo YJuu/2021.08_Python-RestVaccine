@@ -63,7 +63,7 @@ def crop_func():
 
     while True:
         now = datetime.now().time() #현재 시간
-        if keyboard.is_pressed("esc"): #6시에 종료
+        if keyboard.is_pressed("esc") or (now.hour >= six.hour): #6시에 종료
             exit_key = 1
         if exit_key == 1:
             driver.quit()  # 브라우저 완전종료
