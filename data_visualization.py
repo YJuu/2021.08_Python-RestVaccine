@@ -6,9 +6,10 @@ import pandas as pd
 import glob
 from datetime import datetime, timedelta
 import sqlite3
+import os
 
-file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data/'
-font_path = 'C:/Windows/Fonts/08SeoulHangangM.ttf'
+file_path = os.getcwd()+'/'
+font_path = '경기천년제목_Light.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
 matplotlib.rc('font',family = font_name)
 
@@ -636,10 +637,10 @@ def show_hosps():
 
 if __name__ == "__main__":
     get_files(file_path)
-    #yesterday_vacc()
-    #hosp_acc()
-    #acc_vacc()
-    #acc_trend()
-    #show_hosps()
-    #vacc_time()
-    #time_hosp()
+    yesterday_vacc()
+    hosp_acc()
+    acc_vacc()
+    acc_trend()
+    show_hosps()
+    vacc_time()
+    time_hosp()
