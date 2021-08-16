@@ -71,7 +71,6 @@ def crop_func():
         refresh.click()
         driver.implicitly_wait(2)
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
-        temp.show()
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
         stat = Is.Stat(im)  # ls, ImageStat
         if stat.sum != [0, 0, 0]:
