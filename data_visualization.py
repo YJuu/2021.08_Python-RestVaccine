@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 import sqlite3
 import numpy as np
 
-file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data'
+file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data/'
 font_path = 'C:/Windows/Fonts/08SeoulHangangM.ttf'
 font_name = font_manager.FontProperties(fname=font_path).get_name()
 matplotlib.rc('font',family = font_name)
@@ -25,6 +25,7 @@ col8 = "#da3738"
 
 opt_day = 0
 opt_AZ = 0
+opt_time = 0
 
 class hospital_acc:
     hosp = []
@@ -256,14 +257,12 @@ def hosp_acc():
     def r1func(label):
         global opt_day
         idx = labels1.index(label)
-        if idx == 0: opt_day = 0
-        else: opt_day = 1
+        opt_day = idx
         acc_opt()
     def r2func(label):
         global opt_AZ
         idx = labels2.index(label)
-        if idx == 0: opt_AZ = 0
-        else: opt_AZ = 1
+        opt_AZ = idx
         acc_opt()
 
     show_acc(1)
@@ -361,20 +360,17 @@ def vacc_time():
     cur.execute(query)
     result2 = cur.fetchall()
 
-    time = ['9시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시']
-    time_cnt_AZ = [0,0,0,0,0,0,0,0,0]
-    time_cnt = [0,0,0,0,0,0,0,0,0]
+    time = ['8시','9시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시']
+    time_cnt_AZ = [0,0,0,0,0,0,0,0,0,0]
+    time_cnt = [0,0,0,0,0,0,0,0,0,0]
 
     for i in range(len(result1)):
         time1 = int(str(result1[i][0])[-8:-6])
-        time_cnt_AZ[time1-9] += 1
+        time_cnt_AZ[time1-8] += 1
 
     for i in range(len(result2)):
         time2 = int(str(result2[i][0])[-8:-6])
-        time_cnt[time2 - 9] += 1
-
-    print(time_cnt)
-    print(time_cnt_AZ)
+        time_cnt[time2 - 8] += 1
 
     fig = plt.figure(figsize=(14, 6))
     ax = fig.add_subplot(1, 1, 1)
@@ -426,6 +422,129 @@ def vacc_time():
     plt.show()
 
 #시간대별 병원 - 시간대에 백신 데이터가 있으면 cnt > cnt가 많은 순으로
+def time_hosp():
+    query = """
+                select hospital, min(time) from vacc
+                group by hospital, date order by time desc
+                """
+    cur.execute(query)
+    result1 = cur.fetchall()
+
+    query = """
+                    select hospital, min(time) from vacc
+                    where pfizer != 0 or moderna != 0 
+                    group by hospital, date order by time desc
+                    """
+    cur.execute(query)
+    result2 = cur.fetchall()
+
+    time_cnt1 = [{},{},{},{},{},{},{},{},{},{}]
+    time_cnt2 = [{},{},{},{},{},{},{},{},{},{}]
+
+    #쿼리문 결과를 딕셔너리로 저장
+    for i in range(len(result1)):
+        hosp = result1[i][0]
+        t = result1[i][1]
+        time = int(t[-8:-6])
+        if hosp in time_cnt1[time-8]:
+            time_cnt1[time - 8][hosp] += 1
+        else:
+            time_cnt1[time - 8][hosp] = 1
+
+    for i in range(len(result2)):
+        hosp = result2[i][0]
+        t = result2[i][1]
+        time = int(t[-8:-6])
+        if hosp in time_cnt2[time-8]:
+            time_cnt2[time - 8][hosp] += 1
+        else:
+            time_cnt2[time - 8][hosp] = 1
+
+    #딕셔너리를 정렬 후 리스트에 저장
+    hosps1 = []
+    cnts1 = []
+    hosps2 = []
+    cnts2 = []
+
+    for i in range(10):
+        time_cnt1[i] = sorted(time_cnt1[i].items(), key = lambda x : x[1],reverse = True)
+        time_cnt2[i] = sorted(time_cnt2[i].items(), key = lambda x : x[1],reverse = True)
+        temp_hosp1 = []
+        temp_cnt1 = []
+        temp_hosp2 = []
+        temp_cnt2 = []
+
+        for j in range(len(time_cnt1[i])):
+            temp_hosp1.append(time_cnt1[i][j][0])
+            temp_cnt1.append(time_cnt1[i][j][1])
+        hosps1.append(temp_hosp1)
+        cnts1.append(temp_cnt1)
+
+        for j in range(len(time_cnt2[i])):
+            temp_hosp2.append(time_cnt2[i][j][0])
+            temp_cnt2.append(time_cnt2[i][j][1])
+        hosps2.append(temp_hosp2)
+        cnts2.append(temp_cnt2)
+
+    fig = plt.figure(figsize=(14, 6))
+    ax = fig.add_subplot(1, 1, 1)
+
+    #선택 시간대에 따라 시각화
+    def func(t, hosp, cnt):
+        if hosp[t]:
+            ax.cla()
+            ax.bar(hosp[t], cnt[t], color=col3, width=0.4, label='발생량')
+            ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
+            ax.set_xticklabels(hosp[t],rotation = 20, ha="center")
+
+            for i, v in enumerate(hosp[t]):
+                ax.text(v, cnt[t][i], str(cnt[t][i]) + '회',
+                         fontsize=10, color=col1,
+                         horizontalalignment='center',
+                         verticalalignment='bottom')
+            ax.axes.xaxis.set_visible(True)
+            ax.axes.yaxis.set_visible(False)
+
+        else:
+            ax.cla()
+            ax.axes.xaxis.set_visible(False)
+            ax.axes.yaxis.set_visible(False)
+            ax.text(0.5, 0.5, "결과가 없습니다", horizontalalignment='center', size=30)
+
+        fig.canvas.draw()
+
+    # 라디오 버튼에 따른 옵션
+    def time_opt():
+        if opt_AZ == 0:
+            func(opt_time, hosps1, cnts1)
+        else:
+            func(opt_time, hosps2, cnts2)
+
+    labels1 = ['8시','9시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시']
+    labels2 = ["AZ포함","AZ미포함"]
+
+    # 라디오 버튼에 연결할 함수
+    def r1func(label):
+        global opt_time
+        idx = labels1.index(label)
+        opt_time = idx
+        time_opt()
+
+    def r2func(label):
+        global opt_AZ
+        idx = labels2.index(label)
+        opt_AZ = idx
+        time_opt()
+
+    axes1 = plt.axes([0.02, 0.5, 0.08, 0.3])
+    axes2 = plt.axes([0.02, 0.2, 0.08, 0.2])
+    radio1 = pwd.RadioButtons(axes1, labels1, activecolor=col2)
+    radio2 = pwd.RadioButtons(axes2, labels2, activecolor=col2)
+    radio1.on_clicked(r1func)
+    radio2.on_clicked(r2func)
+
+    func(0, hosps1, cnts1)
+    plt.show()
 
 #근처 100개 병원 정보 출력
 def show_hosps():
@@ -556,4 +675,5 @@ get_files(file_path)
 #avg_occ()
 #acc_trend()
 #show_hosps()
-vacc_time()
+#vacc_time()
+time_hosp()
