@@ -115,6 +115,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.pushButton_1.clicked.connect(MainWindow.must)
         self.pushButton_2.clicked.connect(MainWindow.collect)
+        self.pushButton_3.clicked.connect(MainWindow.result)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
