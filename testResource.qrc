@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="background">
+    <file>pngwing.com (2).png</file>
+    <file>bg-blue.png</file>
+    <file>bg_blur.png</file>
+    <file>로고_아이콘.png</file>
+    <file>로고_연한거 (1).png</file>
+    <file>bg.png</file>
+    <file>bg_2.png</file>
+    <file>bg-Light Gray.png</file>
+  </qresource>
+</RCC>
