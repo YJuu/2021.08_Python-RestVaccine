@@ -2,7 +2,6 @@
 import pyautogui
 from selenium import webdriver as wd
 import pygetwindow as gw
-import pyautogui as pg
 from PIL import ImageGrab as Ig
 from PIL import ImageChops as Ic
 from PIL import ImageStat as Is
@@ -11,6 +10,8 @@ import keyboard
 from bs4 import BeautifulSoup  # html 소스코드 가져오기 위함
 from datetime import datetime
 import os
+
+exit_key = 0
 
 # 페이지 로드를 위한 기본 정보
 webdriver_path = 'd:/programfiles/chromedriver/chromedriver.exe' #사용자에게 입력받을 정보
@@ -23,7 +24,12 @@ def set_driver(driver):
     global webdriver_path
     webdriver_path = driver
 
+def exit_func():
+    global exit_key
+    exit_key = 1
+
 def crop_func():
+    global exit_key
     options = wd.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = wd.Chrome(webdriver_path, options=options)
@@ -58,11 +64,14 @@ def crop_func():
     while True:
         now = datetime.now().time() #현재 시간
         if keyboard.is_pressed("esc"): #6시에 종료
-            driver.quit() #브라우저 완전종료
+            exit_key = 1
+        if exit_key == 1:
+            driver.quit()  # 브라우저 완전종료
             break
         refresh.click()
         driver.implicitly_wait(2)
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
+        temp.show()
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
         stat = Is.Stat(im)  # ls, ImageStat
         if stat.sum != [0, 0, 0]:
