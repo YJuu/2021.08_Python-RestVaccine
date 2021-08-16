@@ -17,6 +17,9 @@ import os
 webdriver_path = 'C:/chromedriver.exe' #사용자에게 입력받을 정보
 vac_add = 'https://m.place.naver.com/rest/vaccine'
 
+def set_driver(driver):
+    webdriver_path = driver  # 사용자에게 입력받을 정보
+
 # 텍스트 파일 및 이미지 파일 저장 폴더 생성
 today = date.today()
 str_today = str(today).replace('-', '')
@@ -90,5 +93,7 @@ def crop_func(img):
                     f.close()
 
 
-
+if __name__ == "__main__":
+    f
+    set_driver()
 crop_func(img)

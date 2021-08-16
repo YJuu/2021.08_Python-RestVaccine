@@ -5,9 +5,7 @@ import matplotlib
 import pandas as pd
 import glob
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 import sqlite3
-import numpy as np
 
 file_path = 'C:/Users/하윤주/Desktop/데이터교육/vaccine_data/'
 font_path = 'C:/Windows/Fonts/08SeoulHangangM.ttf'
@@ -230,6 +228,7 @@ def hosp_acc():
                          verticalalignment='top')
             ax.grid(True, axis='y', alpha=0.5, linestyle='--', color='#d7d7d7')
             ax.legend()
+            ax.set_xticklabels(temp.hosp, rotation=20, ha="center")
             ax.axes.xaxis.set_visible(True)
             ax.axes.yaxis.set_visible(True)
         #데이터가 없는 경우
@@ -275,39 +274,6 @@ def hosp_acc():
     radio2.on_clicked(r2func)
 
     plt.show()
-
-#병원별 평균 발생량 ing
-def avg_occ():
-    query = """
-            select  hospital, sum(AZ+pfizer+moderna) as tot, sum(AZ), sum(pfizer),sum(moderna) 
-            from vacc_occ
-            group by hospital
-            order by tot desc
-            """
-    cur.execute(query)
-    sum = cur.fetchmany(10)
-
-    query = """
-            select count(distinct date) from vacc_occ
-            """
-    cur.execute(query)
-    cnt = cur.fetchall()[0][0]
-
-    if not sum:
-        print("결과가 없습니다")
-        return
-
-    avg_AZ = []
-    avg_pfizer = []
-    avg_moderna = []
-    avg_tot = []
-    hosp = []
-    for i in range(10):
-        hosp.append(sum[i][0])
-        avg_tot.append(sum[i][1]/cnt)
-        avg_AZ.append(sum[i][2]/cnt)
-        avg_pfizer.append(sum[i][3]/cnt)
-        avg_moderna.append(sum[i][4]/cnt)
 
 #일별 잔여 백신 발생 추이 - 전체, AZ, 화이자, 모더나
 def acc_trend():
@@ -668,12 +634,12 @@ def show_hosps():
 
     plt.show()
 
-get_files(file_path)
-#yesterday_vacc()
-#hosp_acc()
-#acc_vacc()
-#avg_occ()
-#acc_trend()
-#show_hosps()
-#vacc_time()
-time_hosp()
+if __name__ == "__main__":
+    get_files(file_path)
+    #yesterday_vacc()
+    #hosp_acc()
+    #acc_vacc()
+    #acc_trend()
+    #show_hosps()
+    #vacc_time()
+    #time_hosp()
