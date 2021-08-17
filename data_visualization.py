@@ -9,8 +9,10 @@ import sqlite3
 import os
 
 file_path = os.getcwd()+'/data/'
-font_path = '경기천년제목_Light.ttf'
-font_name = font_manager.FontProperties(fname=font_path).get_name()
+font_path = os.getcwd()+'/경기천년제목_Light.ttf'
+font_name = font_manager.FontProperties(fname=font_path, size = 10)
+font_manager._rebuild()
+font_name = font_name.get_name()
 matplotlib.rc('font',family = font_name)
 
 col1 = "#0f2839"
@@ -260,11 +262,13 @@ def hosp_acc():
     #라디오 버튼에 연결할 함수
     def r1func(label):
         global opt_day
+        print("r1")
         idx = labels1.index(label)
         opt_day = idx
         acc_opt()
     def r2func(label):
         global opt_AZ
+        print("r2")
         idx = labels2.index(label)
         opt_AZ = idx
         acc_opt()

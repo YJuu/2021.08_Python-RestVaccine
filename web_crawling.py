@@ -1,6 +1,6 @@
 # 필요 라이브러리 import
 import random
-
+import pyautogui as pg
 from selenium import webdriver as wd
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -51,10 +51,16 @@ def crop_func():
     npt = npwd.top
     npb = npwd.bottom - 70
     np_crop = (npl, npt, npr, npb)
+    print(np_crop)
 
     refresh = driver.find_element_by_xpath('//*[@id="_list_scroll_container"]/div/div/div[1]/div/div/div[2]/a')
-    refresh.click()
+    location = refresh.location
+    size = refresh.size
+    click = (location['x']+size['width'],location['y']+7*size['height'])
+    print(size)
+    print(click)
 
+    pg.click(click)
     img = Ig.grab(np_crop)
 
     filename = time.strftime('%H_%M_%S')
@@ -68,7 +74,7 @@ def crop_func():
 
     while True:
         now = datetime.now().time() #현재 시간
-        if keyboard.is_pressed("esc") or (now.hour >= six.hour): #6시에 종료
+        if keyboard.is_pressed("esc"): #6시에 종료
             exit_key = 1
         if exit_key == 1:
             driver.quit()  # 브라우저 완전종료
@@ -78,7 +84,7 @@ def crop_func():
             ran_x = random.randint(npl+400, npr-100)
             ran_y = random.randint(npb, npwd.bottom)
             pyautogui.click(ran_x, ran_y)
-        refresh.click()
+        pg.click(click)
         WebDriverWait(driver, 1).until(
             ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/div/div[1]/div[1]/div/div[1]/div[3]'))
         )
@@ -101,5 +107,5 @@ def crop_func():
 
 
 if __name__ == "__main__":
-    set_driver('C:/python/chromedriver/chromedriver.exe')
+    set_driver('d:/programfiles/chromedriver/chromedriver.exe')
     crop_func()
