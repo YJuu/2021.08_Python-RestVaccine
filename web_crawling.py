@@ -79,7 +79,7 @@ def crop_func():
             ran_y = random.randint(npb, npwd.bottom)
             pyautogui.click(ran_x, ran_y)
         refresh.click()
-        WebDriverWait(driver, 2).until(
+        WebDriverWait(driver, 1).until(
             ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/a'))
         )
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
@@ -101,5 +101,5 @@ def crop_func():
 
 
 if __name__ == "__main__":
-    set_driver('d:/programfiles/chromedriver/chromedriver.exe')
+    set_driver('C:/python/chromedriver/chromedriver.exe')
     crop_func()
