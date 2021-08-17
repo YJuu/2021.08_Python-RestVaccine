@@ -9,6 +9,7 @@ import web_crawling as wc
 import html_parsing as hp
 import data_visualization as dv
 
+
 myUIClass = uic.loadUiType("main.ui")[0]
 
 class MyDialog(QDialog):
