@@ -6,7 +6,6 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -95,7 +94,6 @@ class Ui_Dialog3(object):
         self.pushButton_6.setText(_translate("Dialog", "시간대별 병원"))
         self.pushButton_7.setText(_translate("Dialog", "근처 100개 병원 정보"))
 import testResource_rc
-
 
 if __name__ == "__main__":
     import sys
