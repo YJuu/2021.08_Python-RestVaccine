@@ -1,8 +1,10 @@
 # 필요 라이브러리 import
 import random
 
-import pyautogui
 from selenium import webdriver as wd
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 import pygetwindow as gw
 from PIL import ImageGrab as Ig
 from PIL import ImageChops as Ic
@@ -77,7 +79,9 @@ def crop_func():
             ran_y = random.randint(npb, npwd.bottom)
             pyautogui.click(ran_x, ran_y)
         refresh.click()
-        driver.implicitly_wait(2)
+        WebDriverWait(driver, 2).until(
+            ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/a'))
+        )
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
         stat = Is.Stat(im)  # ls, ImageStat
