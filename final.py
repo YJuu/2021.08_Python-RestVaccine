@@ -26,19 +26,18 @@ class MyDialog2(QDialog):
         self.ui.setupUi(self)
 
     def collect_1(self):
-        wc.set_driver('C:/Users/Administrator/chromedriver_win32/chromedriver.exe')  #바꿔줘야 함
+        wc.set_driver('d:/programfiles/chromedriver/chromedriver.exe')  #바꿔줘야 함
         wc.crop_func()
 
     def collect_3(self):
         hp.get_files()
-
-
 
 class MyDialog3(QDialog):
     def __init__(self):
         super().__init__()
         self.ui = Ui_Dialog3()
         self.ui.setupUi(self)
+        dv.get_files()
 
 
     def result_1(self):
@@ -61,8 +60,6 @@ class MyDialog3(QDialog):
 
     def result_7(self):
         dv.show_hosps()
-
-
 
 class mainWindow(QMainWindow, myUIClass):
     def __init__(self):
