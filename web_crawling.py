@@ -16,22 +16,12 @@ from bs4 import BeautifulSoup  # html 소스코드 가져오기 위함
 from datetime import datetime
 import os
 
-exit_key = 0
-
 # 페이지 로드를 위한 기본 정보
-webdriver_path = 'd:/programfiles/chromedriver/chromedriver.exe' #사용자에게 입력받을 정보
+webdriver_path = 'c:/chromedriver/chromedriver.exe'
 vac_add = 'https://m.place.naver.com/rest/vaccine'
 file_path = os.getcwd()+'/data/'
 
 pyautogui.FAILSAFE = False
-
-def set_driver(driver):
-    global webdriver_path
-    webdriver_path = driver
-
-def exit_func():
-    global exit_key
-    exit_key = 1
 
 def crop_func():
     global exit_key
@@ -70,9 +60,7 @@ def crop_func():
 
     while True:
         now = datetime.now().time() #현재 시간
-        if keyboard.is_pressed("esc"): #6시에 종료
-            exit_key = 1
-        if exit_key == 1:
+        if keyboard.is_pressed("esc") or now >= six: #6시에 종료
             driver.quit()  # 브라우저 완전종료
             break
         if i == 1000:
@@ -108,5 +96,5 @@ def crop_func():
 
 
 if __name__ == "__main__":
-    set_driver('d:/programfiles/chromedriver/chromedriver.exe')
+    crop_func()
     crop_func()

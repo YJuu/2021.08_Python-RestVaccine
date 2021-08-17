@@ -26,7 +26,6 @@ class MyDialog2(QDialog):
         self.ui.setupUi(self)
 
     def collect_1(self):
-        wc.set_driver('d:/programfiles/chromedriver/chromedriver.exe')  #바꿔줘야 함
         wc.crop_func()
 
     def collect_3(self):
