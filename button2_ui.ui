@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>447</width>
-    <height>529</height>
+    <height>491</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,9 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>310</y>
+     <y>330</y>
      <width>287</width>
-     <height>71</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -40,9 +40,9 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>20</y>
+     <y>10</y>
      <width>341</width>
-     <height>491</height>
+     <height>471</height>
     </rect>
    </property>
    <property name="text">
@@ -50,27 +50,6 @@
    </property>
    <property name="pixmap">
     <pixmap resource="testResource.qrc">:/background/bg.png</pixmap>
-   </property>
-  </widget>
-  <widget class="QLabel" name="changetxt">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>400</y>
-     <width>301</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>경기천년제목 Medium</family>
-     <pointsize>15</pointsize>
-     <italic>true</italic>
-     <underline>true</underline>
-    </font>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;수집 완료 !&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt; font-style:normal;&quot;&gt;창을 닫은 후 수집 결과를 확인해보세요. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -89,19 +68,115 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;데이터 수집 중에는&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;컴퓨터 사용이&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;어렵습니다 :(&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;원활한 데이터 수집을 위해&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;크롬 창 영역을 &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;침범하지 말아주세요 :)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>240</y>
+     <width>271</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>경기천년제목 Light</family>
+     <pointsize>7</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>데이터 수집 중 크롬 창 강제종료 시 오류가 날 수 있습니다.</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>260</y>
+     <width>201</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>경기천년제목 Light</family>
+     <pointsize>7</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Esc 버튼을 눌러 크롬창을 종료해주세요.</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>380</y>
+     <width>287</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>경기천년제목 Medium</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>수집한 데이터 정리하기</string>
    </property>
   </widget>
   <zorder>label_2</zorder>
   <zorder>pushButton</zorder>
-  <zorder>changetxt</zorder>
   <zorder>label</zorder>
+  <zorder>label_3</zorder>
+  <zorder>label_4</zorder>
+  <zorder>pushButton_2</zorder>
  </widget>
  <resources>
   <include location="testResource.qrc"/>
+  <include location="testResource.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>collect_1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>433</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>collect_3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>21</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>collect()</slot>
+  <slot>collect_1()</slot>
+  <slot>collect_2()</slot>
+  <slot>collect_3()</slot>
  </slots>
 </ui>

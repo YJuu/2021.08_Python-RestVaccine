@@ -10,7 +10,6 @@ import html_parsing as hp
 import data_visualization as dv
 
 
-
 myUIClass = uic.loadUiType("main.ui")[0]
 
 class MyDialog(QDialog):
@@ -30,9 +29,6 @@ class MyDialog2(QDialog):
         wc.set_driver('C:/Users/Administrator/chromedriver_win32/chromedriver.exe')  #바꿔줘야 함
         wc.crop_func()
 
-    def collect_2(self):
-        wc.exit_func()
-
     def collect_3(self):
         hp.get_files()
 
@@ -44,38 +40,33 @@ class MyDialog3(QDialog):
         self.ui = Ui_Dialog3()
         self.ui.setupUi(self)
 
+
     def result_1(self):
-        dv.get_files()
         dv.yesterday_vacc()
 
     def result_2(self):
-        dv.get_files()
         dv.acc_vacc()
 
     def result_3(self):
-        dv.get_files()
         dv.hosp_acc()
 
     def result_4(self):
-        dv.get_files()
         dv.acc_trend()
 
     def result_5(self):
-        dv.get_files()
         dv.vacc_time()
 
     def result_6(self):
-        dv.get_files()
         dv.time_hosp()
 
     def result_7(self):
-        dv.get_files()
         dv.show_hosps()
 
 
 
 class mainWindow(QMainWindow, myUIClass):
     def __init__(self):
+        dv.get_files()
         super().__init__()
         self.setupUi(self)
         self.ui = uic.loadUi("main.ui", self)

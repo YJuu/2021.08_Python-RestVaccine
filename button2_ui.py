@@ -9,6 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Dialog2(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -17,7 +18,7 @@ class Ui_Dialog2(object):
         icon.addPixmap(QtGui.QPixmap(":/background/로고_아이콘.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(80, 280, 287, 41))
+        self.pushButton.setGeometry(QtCore.QRect(80, 330, 287, 41))
         self.pushButton.setStyleSheet('QPushButton {background-color: #98bfe0; color: white; border-radius: 25px;}')
         font = QtGui.QFont()
         font.setFamily("경기천년제목 Medium")
@@ -36,32 +37,38 @@ class Ui_Dialog2(object):
         font.setPointSize(12)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setGeometry(QtCore.QRect(90, 240, 271, 51))
+        font = QtGui.QFont()
+        font.setFamily("경기천년제목 Light")
+        font.setPointSize(7)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4.setGeometry(QtCore.QRect(130, 260, 201, 41))
+        font = QtGui.QFont()
+        font.setFamily("경기천년제목 Light")
+        font.setPointSize(7)
+        self.label_4.setFont(font)
+        self.label_4.setObjectName("label_4")
         self.pushButton_2 = QtWidgets.QPushButton(Dialog)
-        self.pushButton_2.setGeometry(QtCore.QRect(80, 330, 287, 41))
+        self.pushButton_2.setGeometry(QtCore.QRect(80, 380, 287, 41))
         self.pushButton_2.setStyleSheet('QPushButton {background-color: #98bfe0; color: white; border-radius: 25px;}')
         font = QtGui.QFont()
         font.setFamily("경기천년제목 Medium")
         font.setPointSize(10)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_3 = QtWidgets.QPushButton(Dialog)
-        self.pushButton_3.setGeometry(QtCore.QRect(80, 380, 287, 41))
-        self.pushButton_3.setStyleSheet('QPushButton {background-color: #98bfe0; color: white; border-radius: 25px;}')
-        font = QtGui.QFont()
-        font.setFamily("경기천년제목 Medium")
-        font.setPointSize(10)
-        self.pushButton_3.setFont(font)
-        self.pushButton_3.setObjectName("pushButton_3")
         self.label_2.raise_()
         self.pushButton.raise_()
         self.label.raise_()
+        self.label_3.raise_()
+        self.label_4.raise_()
         self.pushButton_2.raise_()
-        self.pushButton_3.raise_()
 
         self.retranslateUi(Dialog)
         self.pushButton.clicked.connect(Dialog.collect_1)
-        self.pushButton_2.clicked.connect(Dialog.collect_2)
-        self.pushButton_3.clicked.connect(Dialog.collect_3)
+        self.pushButton_2.clicked.connect(Dialog.collect_3)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -69,8 +76,9 @@ class Ui_Dialog2(object):
         Dialog.setWindowTitle(_translate("Dialog", "데이터 수집하기"))
         self.pushButton.setText(_translate("Dialog", "수집 시작하기"))
         self.label.setText(_translate("Dialog", "<html><head/><body><p align=\"center\">원활한 데이터 수집을 위해</p><p align=\"center\">크롬 창 영역을 </p><p align=\"center\">침범하지 말아주세요 :)</p></body></html>"))
-        self.pushButton_2.setText(_translate("Dialog", "수집 완료하기"))
-        self.pushButton_3.setText(_translate("Dialog", "수집한 데이터 정리하기"))
+        self.label_3.setText(_translate("Dialog", "데이터 수집 중 크롬 창 강제종료 시 오류가 날 수 있습니다."))
+        self.label_4.setText(_translate("Dialog", "Esc 버튼을 눌러 크롬창을 종료해주세요."))
+        self.pushButton_2.setText(_translate("Dialog", "수집한 데이터 정리하기"))
 import testResource_rc
 
 
