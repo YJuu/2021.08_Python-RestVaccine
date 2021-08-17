@@ -299,9 +299,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>result()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>699</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>14</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>must()</slot>
   <slot>collect()</slot>
+  <slot>result()</slot>
  </slots>
 </ui>
