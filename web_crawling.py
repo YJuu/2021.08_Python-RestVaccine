@@ -63,9 +63,6 @@ def crop_func():
     f.write(html)
     f.close()
     i = 0
-    width, height = pyautogui.size()
-    ran_x = random.randint(1,width)
-    ran_y = random.randint(1,height)
 
     while True:
         now = datetime.now().time() #현재 시간
@@ -74,9 +71,11 @@ def crop_func():
         if exit_key == 1:
             driver.quit()  # 브라우저 완전종료
             break
-        if i == 60:
+        if i == 1000:
             i = 0
-            pyautogui.moveTo(ran_x, ran_y)
+            ran_x = random.randint(npwd.left+400, npwd.right-100)
+            ran_y = random.randint(npwd.bottom, npwd.bottom-70)
+            pyautogui.click(ran_x, ran_y)
         refresh.click()
         driver.implicitly_wait(2)
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
