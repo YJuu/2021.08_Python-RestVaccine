@@ -37,6 +37,9 @@ class hospital_acc:
 conn = sqlite3.connect(':memory:')
 cur = conn.cursor()
 
+def close_db():
+    conn.close()
+
 #csv파일들을 읽어오는 함수
 def get_files():
     #경로 내의 모든 csv파일명을 리스트로 생성
@@ -90,7 +93,20 @@ def get_files():
     df.drop([df.columns[0]], axis=1, inplace=True)
     #통합 데이터 저장
     df.to_csv(total_path, encoding='cp949')
-    df.to_sql('vacc',conn)
+
+    try:
+        df.to_sql('vacc',conn)
+    except:
+        query = """
+                drop table vacc
+                """
+        cur.execute(query)
+        query = """
+                drop view vacc_occ
+                """
+        cur.execute(query)
+        df.to_sql('vacc', conn)
+
     cur.execute("select * from vacc")
 
     #자주 사용하는 데이터를 모아 view생성
@@ -645,6 +661,9 @@ def show_hosps():
     plt.show()
 
 if __name__ == "__main__":
+    print("first")
+    get_files()
+    print("second")
     get_files()
     yesterday_vacc()
     #hosp_acc()
