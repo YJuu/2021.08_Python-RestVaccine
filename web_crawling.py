@@ -1,10 +1,13 @@
 # 필요 라이브러리 import
+import random
+
 import pyautogui
 from selenium import webdriver as wd
 import pygetwindow as gw
 from PIL import ImageGrab as Ig
 from PIL import ImageChops as Ic
 from PIL import ImageStat as Is
+import pyautogui
 import time
 import keyboard
 from bs4 import BeautifulSoup  # html 소스코드 가져오기 위함
@@ -51,7 +54,6 @@ def crop_func():
     refresh.click()
 
     img = Ig.grab(np_crop)
-    img.show()
 
     filename = time.strftime('%H_%M_%S')
     six=datetime.strptime('18:00:00','%H:%M:%S').time()
@@ -60,6 +62,10 @@ def crop_func():
     f = open(file_path + filename + '.txt', 'w', encoding='UTF-8') #첫화면 html 소스 저장
     f.write(html)
     f.close()
+    i = 0
+    width, height = pyautogui.size()
+    ran_x = random.randint(1,width)
+    ran_y = random.randint(1,height)
 
     while True:
         now = datetime.now().time() #현재 시간
@@ -68,6 +74,9 @@ def crop_func():
         if exit_key == 1:
             driver.quit()  # 브라우저 완전종료
             break
+        if i == 60:
+            i = 0
+            pyautogui.moveTo(ran_x, ran_y)
         refresh.click()
         driver.implicitly_wait(2)
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
@@ -85,9 +94,9 @@ def crop_func():
                     f = open(file_path + filename + '.txt', 'w', encoding='UTF-8')
                     f.write(html)
                     f.close()
+        i += 1
 
 
 if __name__ == "__main__":
-    print(file_path)
     set_driver('d:/programfiles/chromedriver/chromedriver.exe')
     crop_func()
