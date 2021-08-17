@@ -70,6 +70,7 @@ class Ui_Dialog(object):
         self.pushButton.setText(_translate("Dialog", "설치 완료 !"))
         self.txt_1.setText(_translate("Dialog", "<html><head/><body><p align=\"center\">프로그램 실행을 위해 </p><p align=\"center\">Chrome Driver 설치가 필요합니다.</p></body></html>"))
         self.label.setText('<a href="https://beaded-jaborosa-fdf.notion.site/Chrome-Driver-3e707acbdea44cd28af991708097e938">Chrome Driver 설치 가이드</a>')
+        self.label.setOpenExternalLinks(True)
 import testResource_rc
 
 
