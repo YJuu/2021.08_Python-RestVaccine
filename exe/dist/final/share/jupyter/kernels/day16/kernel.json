@@ -1,0 +1,14 @@
+{
+ "argv": [
+  "C:\\Python\\39\\python.exe",
+  "-m",
+  "ipykernel_launcher",
+  "-f",
+  "{connection_file}"
+ ],
+ "display_name": "[dayKernel]",
+ "language": "python",
+ "metadata": {
+  "debugger": true
+ }
+}
