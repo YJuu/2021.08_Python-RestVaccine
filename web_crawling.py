@@ -1,10 +1,15 @@
 # 필요 라이브러리 import
-import pyautogui
+import random
+
 from selenium import webdriver as wd
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 import pygetwindow as gw
 from PIL import ImageGrab as Ig
 from PIL import ImageChops as Ic
 from PIL import ImageStat as Is
+import pyautogui
 import time
 import keyboard
 from bs4 import BeautifulSoup  # html 소스코드 가져오기 위함
@@ -51,7 +56,6 @@ def crop_func():
     refresh.click()
 
     img = Ig.grab(np_crop)
-    img.show()
 
     filename = time.strftime('%H_%M_%S')
     six=datetime.strptime('18:00:00','%H:%M:%S').time()
@@ -60,6 +64,7 @@ def crop_func():
     f = open(file_path + filename + '.txt', 'w', encoding='UTF-8') #첫화면 html 소스 저장
     f.write(html)
     f.close()
+    i = 0
 
     while True:
         now = datetime.now().time() #현재 시간
@@ -68,8 +73,15 @@ def crop_func():
         if exit_key == 1:
             driver.quit()  # 브라우저 완전종료
             break
+        if i == 1000:
+            i = 0
+            ran_x = random.randint(npl+400, npr-100)
+            ran_y = random.randint(npb, npwd.bottom)
+            pyautogui.click(ran_x, ran_y)
         refresh.click()
-        driver.implicitly_wait(2)
+        WebDriverWait(driver, 1).until(
+            ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/a'))
+        )
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
         stat = Is.Stat(im)  # ls, ImageStat
@@ -85,9 +97,9 @@ def crop_func():
                     f = open(file_path + filename + '.txt', 'w', encoding='UTF-8')
                     f.write(html)
                     f.close()
+        i += 1
 
 
 if __name__ == "__main__":
-    print(file_path)
-    set_driver('d:/programfiles/chromedriver/chromedriver.exe')
+    set_driver('C:/python/chromedriver/chromedriver.exe')
     crop_func()
