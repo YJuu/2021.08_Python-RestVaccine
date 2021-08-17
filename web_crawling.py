@@ -73,8 +73,8 @@ def crop_func():
             break
         if i == 1000:
             i = 0
-            ran_x = random.randint(npwd.left+400, npwd.right-100)
-            ran_y = random.randint(npwd.bottom, npwd.bottom-70)
+            ran_x = random.randint(npl+400, npr-100)
+            ran_y = random.randint(npb, npwd.bottom)
             pyautogui.click(ran_x, ran_y)
         refresh.click()
         driver.implicitly_wait(2)
