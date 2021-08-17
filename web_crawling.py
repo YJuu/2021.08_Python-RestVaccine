@@ -80,7 +80,7 @@ def crop_func():
             pyautogui.click(ran_x, ran_y)
         refresh.click()
         WebDriverWait(driver, 1).until(
-            ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/a'))
+            ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/div/div[1]/div[1]/div/div[1]/div[3]'))
         )
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
         im = Ic.difference(img, temp)  # Ic, ImageChops, 같은 이미지면 difference()의 결과 이미지의 모든 픽셀은 0
