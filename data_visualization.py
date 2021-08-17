@@ -37,9 +37,6 @@ class hospital_acc:
 conn = sqlite3.connect(':memory:')
 cur = conn.cursor()
 
-def close_db():
-    conn.close()
-
 #csv파일들을 읽어오는 함수
 def get_files():
     #경로 내의 모든 csv파일명을 리스트로 생성
@@ -143,15 +140,17 @@ def yesterday_vacc():
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
 
+    fig = plt.figure(figsize=(6,6))
+    ax = fig.add_subplot(1,1,1)
+
     if vacc[0] != None:
-        plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
-        plt.title("전체 발생량 : " + str(yes_vacc) + "건", size=20)
+        ax.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+        ax.set_title("전체 발생량 : " + str(yes_vacc) + "건", size=20)
     else:
         ax = plt.gca()
         ax.axes.xaxis.set_visible(False)
         ax.axes.yaxis.set_visible(False)
         plt.text(0.5, 0.5, "어제의 데이터가 없습니다", horizontalalignment='center', size=30)
-    plt.tight_layout()
     plt.show()
 
 #누적 백신 발생량
@@ -174,9 +173,12 @@ def acc_vacc():
     explode = [0.05,0.05,0.05]
     colors = ['#4a94b0','#b7e5ff','#d7d7d7']
     wedgeprops = {'width':0.7, 'edgecolor' : 'k', 'linewidth':1}
-    plt.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
-    plt.title("전체 발생량 : "+str(tot_vacc)+"건",size=20)
-    plt.tight_layout()
+
+    fig = plt.figure(figsize=(6, 6))
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.pie(vacc,labels = labels, autopct='%.2f%%', explode = explode, colors = colors, wedgeprops = wedgeprops)
+    ax.set_title("전체 발생량 : "+str(tot_vacc)+"건",size=20)
     plt.show()
 
 #병원별 누적 발생량 - opt : 정렬 단위
@@ -235,6 +237,7 @@ def hosp_acc():
 
     # 옵션에 따라 그래프 출력
     def show_acc(opt):
+        print("show acc")
         temp = opt_query(opt)
 
         #데이터가 있는 경우
@@ -261,6 +264,7 @@ def hosp_acc():
             ax.axes.yaxis.set_visible(False)
             ax.text(0.5,0.5,'결과가 없습니다',horizontalalignment = 'center',size=30)
 
+        print("draw")
         fig.canvas.draw()
 
     #라디오 버튼에 따른 옵션
@@ -326,13 +330,15 @@ def acc_trend():
         date.append(trend[i][4][:-9])
 
     #시각화
-    plt.plot(date, tot, color = col7, marker='*', markersize=10,label='전체 발생량')
-    plt.plot(date, AZ, color = col2, marker='o', markersize=5,label='AZ')
-    plt.plot(date, pfizer, color = col4, marker='s', markersize=5,label='화이자')
-    plt.plot(date, moderna, color = col5, marker='^', markersize=5,label='모더나')
-    plt.xticks(rotation=30, ha="center")
-    plt.tight_layout()
-    plt.legend()
+    fig = plt.figure(figsize=(12, 6))
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.plot(date, tot, color = col7, marker='*', markersize=10,label='전체 발생량')
+    ax.plot(date, AZ, color = col2, marker='o', markersize=5,label='AZ')
+    ax.plot(date, pfizer, color = col4, marker='s', markersize=5,label='화이자')
+    ax.plot(date, moderna, color = col5, marker='^', markersize=5,label='모더나')
+    ax.set_xticklabels(date,rotation=30, ha="center")
+    ax.legend()
     plt.show()
 
 #백신 발생 시간대
@@ -661,14 +667,11 @@ def show_hosps():
     plt.show()
 
 if __name__ == "__main__":
-    print("first")
     get_files()
-    print("second")
-    get_files()
-    yesterday_vacc()
+    #yesterday_vacc()
     #hosp_acc()
     #acc_vacc()
-    #acc_trend()
+    acc_trend()
     #show_hosps()
     #vacc_time()
     #time_hosp()
