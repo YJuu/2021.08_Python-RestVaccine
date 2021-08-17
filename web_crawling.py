@@ -51,14 +51,10 @@ def crop_func():
     npt = npwd.top
     npb = npwd.bottom - 70
     np_crop = (npl, npt, npr, npb)
-    print(np_crop)
 
     refresh = driver.find_element_by_xpath('//*[@id="_list_scroll_container"]/div/div/div[1]/div/div/div[2]/a')
-    location = refresh.location
     size = refresh.size
-    click = (location['x']+size['width'],location['y']+7*size['height'])
-    print(size)
-    print(click)
+    click = (npwd.right-1.5*size['width'],npwd.bottom-1.5*size['height'])
 
     pg.click(click)
     img = Ig.grab(np_crop)
@@ -85,7 +81,7 @@ def crop_func():
             ran_y = random.randint(npb, npwd.bottom)
             pyautogui.click(ran_x, ran_y)
         pg.click(click)
-        WebDriverWait(driver, 1).until(
+        WebDriverWait(driver, 2).until(
             ec.presence_of_element_located((By.XPATH,'//*[@id="app-root"]/div/div/div[2]/div/div/div[1]/div[1]/div/div[1]/div[3]'))
         )
         temp = Ig.grab(np_crop)  # Ig(대문자 i), ImageGrab, 지정한 이미지 영역만큼만 캡처하여 temp에 저장
