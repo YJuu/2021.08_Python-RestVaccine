@@ -1,5 +1,6 @@
 # [SST]Rest_Veccine
 ![로고_테있](https://user-images.githubusercontent.com/51108960/132141160-0abe4bfe-b57e-4822-9935-c67b286aad5d.png)
+<img src="https://user-images.githubusercontent.com/51108960/132141160-0abe4bfe-b57e-4822-9935-c67b286aad5d.png"  width="700" height="370">
 경기도 데이터산업인력 양성교육 1기 프로젝트
 데이터산업인력 양성교육 프로젝트 대회 참가작
 코로나 잔여 백신 예측 시스템  
