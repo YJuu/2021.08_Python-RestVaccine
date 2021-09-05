@@ -24,7 +24,6 @@ file_path = os.getcwd()+'/data/'
 pyautogui.FAILSAFE = False
 
 def crop_func():
-    global exit_key
     options = wd.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = wd.Chrome(webdriver_path, options=options)
