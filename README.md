@@ -1,8 +1,10 @@
 # [SST]Rest_Veccine
 <img src="https://user-images.githubusercontent.com/51108960/132141160-0abe4bfe-b57e-4822-9935-c67b286aad5d.png"  width="700" height="370">   
+# 개요
 경기도 데이터산업인력 양성교육 1기 프로젝트
 데이터산업인력 양성교육 프로젝트 대회 참가작
-코로나 잔여 백신 예측 시스템  
+코로나 잔여 백신 예측 지원 시스템  
+# 기능 구현
 *PIL라이브러리 및 selenium라이브러리를 사용하여 웹 크롤링으로 네이버 잔여 백신 예약 시스템에서 html코드 추출  
 *BeautifulSoup라이브러리를 사용하여 html을 분석하여 잔여 백신 데이터 추출  
 *pandas라이브러리 및 matplot라이브러리, pysqlite라이브러리를 사용하여 데이터 분석 및 시각화  
